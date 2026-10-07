@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#113b2f">
+<title>Our Money — Interactive UI</title>
+<style>
+:root{--g:#123f32;--g2:#1d6650;--mint:#e8f4ee;--bg:#f5f6f3;--card:#fff;--text:#17201c;--muted:#7b847f;--line:#e6e9e6;--red:#c84f4f;--amber:#b27a28;--shadow:0 12px 35px rgba(20,55,44,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}.app{max-width:520px;margin:auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:94px}
+.header{background:linear-gradient(145deg,#0b2c23,#1c604c);color:white;padding:calc(20px + env(safe-area-inset-top)) 19px 72px;border-radius:0 0 32px 32px}
+.top{display:flex;align-items:center;justify-content:space-between}.brand{display:flex;gap:10px;align-items:center;font-weight:800}.logo,.avatar{width:39px;height:39px;border-radius:13px;background:#ffffff18;display:grid;place-items:center}.avatar{border-radius:50%;font-size:12px}.hello{margin-top:29px;color:#ffffffa8;font-size:13px}.title{font-size:32px;font-weight:850;letter-spacing:-1.5px;margin:4px 0}.date{font-size:12px;color:#ffffff9a}
+.viewer{margin:-47px 16px 0;background:white;border-radius:23px;padding:15px;box-shadow:var(--shadow);position:relative}.label{font-size:11px;color:var(--muted);font-weight:650}.viewer select{width:100%;border:0;background:var(--mint);padding:13px;border-radius:13px;margin-top:7px;color:var(--g);font-weight:750;outline:0}
+.content{padding:4px 16px 20px}.screen{display:none}.screen.active{display:block}.section{margin-top:23px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}.section-head h2{font-size:16px;margin:0}.link{border:0;background:none;color:var(--g2);font-size:12px;font-weight:700}
+.hero-card,.card{background:white;border:1px solid var(--line);border-radius:23px;padding:19px;box-shadow:0 6px 25px rgba(20,55,44,.035)}.hero-card{border:0;box-shadow:var(--shadow)}
+.hero-row{display:flex;justify-content:space-between}.big{font-size:39px;font-weight:850;letter-spacing:-2px;margin:5px 0}.sub{font-size:11px;color:var(--muted);line-height:1.45}.shield{width:44px;height:44px;background:var(--mint);color:var(--g2);border-radius:15px;display:grid;place-items:center;font-size:20px}.break{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;border-top:1px solid var(--line);margin-top:17px;padding-top:15px}.mini b{font-size:13px}.mini span{display:block;font-size:10px;color:var(--muted);margin-bottom:4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:white;border:1px solid var(--line);border-radius:18px;padding:15px}.stat .ico{width:33px;height:33px;background:var(--mint);color:var(--g2);border-radius:11px;display:grid;place-items:center;margin-bottom:17px}.stat b{font-size:19px}.stat span{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.green{color:#16845b!important}.red{color:var(--red)!important}
+.list{background:white;border:1px solid var(--line);border-radius:22px;padding:2px 16px}.row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}.row:last-child{border:0}.r-ico{width:42px;height:42px;flex:0 0 42px;border-radius:14px;background:var(--mint);color:var(--g2);display:grid;place-items:center}.r-info{flex:1;min-width:0}.r-info b{font-size:13px}.r-info span{display:block;color:var(--muted);font-size:10px;margin-top:4px}.amount{font-size:13px;font-weight:800;text-align:right}.pill{border:0;background:var(--mint);color:var(--g2);padding:6px 8px;border-radius:8px;font-size:9px;font-weight:750;margin-top:5px}
+.goal{background:linear-gradient(145deg,#0d3328,#1c614c);color:white;border-radius:23px;padding:19px}.goal-top{display:flex;justify-content:space-between}.goal small{color:#ffffff9b}.bar{height:8px;background:#ffffff20;border-radius:20px;margin:17px 0 8px;overflow:hidden}.fill{height:100%;background:#c5ead8;border-radius:20px}.goal-foot{display:flex;justify-content:space-between;font-size:10px;color:#ffffffa0}
+.budget{margin:14px 0}.budget:first-child{margin-top:0}.budget-line{display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px}.track{height:7px;background:#edf0ed;border-radius:20px;overflow:hidden}.track i{display:block;height:100%;background:var(--g2);border-radius:20px}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.quick{border:1px solid var(--line);background:white;border-radius:16px;padding:14px 8px;text-align:center}.quick strong{display:block;font-size:17px;margin-bottom:3px}.quick span{font-size:9px;color:var(--muted)}
+.page-title{font-size:27px;font-weight:850;letter-spacing:-1.2px;margin:24px 0 4px}.page-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.segment{display:flex;background:#eaedea;padding:4px;border-radius:13px;margin-bottom:16px}.segment button{flex:1;border:0;background:transparent;padding:9px;border-radius:10px;color:var(--muted);font-size:11px;font-weight:700}.segment button.active{background:white;color:var(--g);box-shadow:0 2px 8px #0000000c}
+.account{display:flex;justify-content:space-between;align-items:center}.account b{font-size:15px}.account .balance{font-size:20px;font-weight:850}.account+.account{border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+.chart{height:145px;display:flex;align-items:end;gap:8px;padding-top:20px}.chart i{flex:1;background:linear-gradient(#27775e,#b7ddcd);border-radius:7px 7px 3px 3px;min-height:10px}.chart-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:9px;margin-top:7px}
+.fab{position:fixed;right:max(18px,calc((100vw - 520px)/2 + 18px));bottom:88px;width:57px;height:57px;border-radius:19px;border:0;background:var(--g);color:white;font-size:27px;box-shadow:0 12px 28px #123f3250;z-index:8}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);height:75px;padding-bottom:env(safe-area-inset-bottom);background:#fffffff5;backdrop-filter:blur(16px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:7}.nav button{border:0;background:none;color:#9aa19d;font-size:9px;font-weight:650}.nav button b{display:block;font-size:20px;margin-bottom:4px}.nav button.active{color:var(--g2)}
+.sheet-bg{display:none;position:fixed;inset:0;background:#0b181450;z-index:20;align-items:end;justify-content:center}.sheet-bg.open{display:flex}.sheet{width:min(520px,100%);background:white;border-radius:28px 28px 0 0;padding:14px 19px calc(28px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto}.handle{width:42px;height:5px;background:#daddda;border-radius:10px;margin:0 auto 18px}.sheet h2{margin:0 0 14px;font-size:21px}.money-input{width:100%;border:0;outline:0;font-size:37px;font-weight:850;padding:8px 0 16px}.field{margin-top:11px}.field label{font-size:10px;color:var(--muted);display:block;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:white}.save{width:100%;border:0;border-radius:13px;background:var(--g);color:white;padding:14px;font-weight:800;margin-top:17px}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.menu-card{border:1px solid var(--line);background:white;border-radius:18px;padding:17px;text-align:left}.menu-card b{display:block;font-size:14px;margin:10px 0 4px}.menu-card span{font-size:10px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header">
+ <div class="top"><div class="brand"><div class="logo">◒</div>Our Money</div><div class="avatar">RK</div></div>
+ <div class="hello">Good morning</div><div class="title">Your money,<br>under control.</div><div class="date">October 2026 financial overview</div>
+</header>
+<div class="viewer"><div class="label">Viewing</div><select id="entity"><option>Household</option><option>Reinhardt</option><option>↳ Invoxa</option><option>Wife</option><option>↳ Farm</option></select></div>
+
+<div class="content">
+<section class="screen active" id="home">
+ <div class="section hero-card"><div class="hero-row"><div><div class="label">Safe to spend</div><div class="big" id="safe">R 14,850</div><div class="sub">After upcoming commitments and savings</div></div><div class="shield">✓</div></div><div class="break"><div class="mini"><span>Available cash</span><b>R31,700</b></div><div class="mini"><span>Upcoming</span><b class="red">R11,850</b></div><div class="mini"><span>Savings</span><b>R5,000</b></div></div></div>
+ <div class="section"><div class="section-head"><h2>This month</h2><button class="link">October</button></div><div class="grid"><div class="stat"><div class="ico">↓</div><span>Income</span><b>R43,000</b></div><div class="stat"><div class="ico">↑</div><span>Expenses</span><b>R21,300</b></div><div class="stat"><div class="ico">◎</div><span>Saved</span><b class="green">R9,500</b></div><div class="stat"><div class="ico">%</div><span>Savings rate</span><b>22.1%</b></div></div></div>
+ <div class="section"><div class="section-head"><h2>Annual savings</h2><button class="link" onclick="go('goals')">View goal</button></div><div class="goal"><div class="goal-top"><div><b>2026 Savings</b><br><small>Target · December</small></div><div style="text-align:right"><b>R128,000</b><br><small>of R200,000</small></div></div><div class="bar"><div class="fill" style="width:64%"></div></div><div class="goal-foot"><span>64% complete</span><span>R72,000 remaining</span></div></div></div>
+ <div class="section"><div class="section-head"><h2>Upcoming</h2><button class="link" onclick="go('recurring')">See all</button></div><div class="list">
+  <div class="row"><div class="r-ico">♢</div><div class="r-info"><b>Insurance</b><span>10 Oct · Reinhardt</span></div><div class="amount">R1,850<br><button class="pill">Mark paid</button></div></div>
+  <div class="row"><div class="r-ico">⇄</div><div class="r-info"><b>Car contribution</b><span>20 Oct · Wife → Reinhardt</span></div><div class="amount green">+R4,000<br><button class="pill">Received</button></div></div>
+  <div class="row"><div class="r-ico">▣</div><div class="r-info"><b>Vehicle finance</b><span>25 Oct · Monthly</span></div><div class="amount">R8,000<br><button class="pill">Mark paid</button></div></div>
+ </div></div>
+ <div class="section"><div class="section-head"><h2>Monthly budget</h2><button class="link" onclick="go('more')">Manage</button></div><div class="card"><div class="budget"><div class="budget-line"><b>Groceries</b><span>R3,400 / R5,000</span></div><div class="track"><i style="width:68%"></i></div></div><div class="budget"><div class="budget-line"><b>Fuel</b><span>R2,150 / R3,500</span></div><div class="track"><i style="width:61%"></i></div></div><div class="budget"><div class="budget-line"><b>Eating out</b><span>R1,850 / R2,000</span></div><div class="track"><i style="width:92%"></i></div></div></div></div>
+ <div class="section"><div class="section-head"><h2>Contributions</h2></div><div class="grid"><div class="stat"><span>Reinhardt</span><b>R17,300</b><span class="green">67% this month</span></div><div class="stat"><span>Wife</span><b>R8,500</b><span class="green">33% this month</span></div></div></div>
+</section>
+
+<section class="screen" id="activity"><div class="page-title">Activity</div><div class="page-sub">Every rand in and out, in one place.</div><div class="segment"><button class="active">All</button><button>Income</button><button>Expenses</button><button>Transfers</button></div><div class="list">
+ <div class="row"><div class="r-ico">▤</div><div class="r-info"><b>Woolworths</b><span>Groceries · Today · Cheque</span></div><div class="amount red">-R846</div></div>
+ <div class="row"><div class="r-ico">◉</div><div class="r-info"><b>Salary</b><span>Income · 1 Oct</span></div><div class="amount green">+R38,000</div></div>
+ <div class="row"><div class="r-ico">⇄</div><div class="r-info"><b>Car contribution</b><span>Wife → Reinhardt · Transfer</span></div><div class="amount">R0 household</div></div>
+ <div class="row"><div class="r-ico">⛽</div><div class="r-info"><b>Engen</b><span>Fuel · 5 Oct</span></div><div class="amount red">-R920</div></div>
+ <div class="row"><div class="r-ico">▦</div><div class="r-info"><b>Farm egg sales</b><span>Farm · Revenue</span></div><div class="amount green">+R6,420</div></div>
+</div></section>
+
+<section class="screen" id="goals"><div class="page-title">Goals</div><div class="page-sub">Turn your plans into numbers.</div>
+ <div class="goal"><div class="goal-top"><div><b>Annual Savings</b><br><small>Household</small></div><div><b>64%</b></div></div><div class="bar"><div class="fill" style="width:64%"></div></div><div class="goal-foot"><span>R128,000 saved</span><span>R200,000 target</span></div></div>
+ <div class="section card"><div class="section-head"><h2>Emergency Fund</h2><b class="green">82%</b></div><div class="bar" style="background:#edf0ed"><div class="fill" style="width:82%;background:var(--g2)"></div></div><div class="sub">R82,000 of R100,000 · On track</div></div>
+ <div class="section card"><div class="section-head"><h2>House Deposit</h2><b>35%</b></div><div class="bar" style="background:#edf0ed"><div class="fill" style="width:35%;background:var(--g2)"></div></div><div class="sub">R105,000 of R300,000 · R12,500/month required</div></div>
+ <div class="section"><button class="save">+ Create a new goal</button></div>
+</section>
+
+<section class="screen" id="recurring"><div class="page-title">Recurring</div><div class="page-sub">Planned money. Nothing posts until you confirm it.</div><div class="quick-grid"><div class="quick"><strong>R11,850</strong><span>Due this month</span></div><div class="quick"><strong>3</strong><span>Upcoming</span></div><div class="quick"><strong>R4,000</strong><span>Transfers</span></div></div>
+ <div class="section"><div class="section-head"><h2>Needs attention</h2></div><div class="list"><div class="row"><div class="r-ico">♢</div><div class="r-info"><b>Insurance</b><span>Monthly · 10th</span></div><div class="amount">R1,850<br><button class="pill">Mark paid</button></div></div><div class="row"><div class="r-ico">⇄</div><div class="r-info"><b>Car contribution</b><span>Wife → Reinhardt · 20th</span></div><div class="amount">R4,000<br><button class="pill">Received</button></div></div><div class="row"><div class="r-ico">▣</div><div class="r-info"><b>Vehicle finance</b><span>Monthly · 25th</span></div><div class="amount">R8,000<br><button class="pill">Mark paid</button></div></div></div></div>
+ <div class="section"><button class="save">+ Add recurring item</button></div>
+</section>
+
+<section class="screen" id="more"><div class="page-title">More</div><div class="page-sub">Everything behind your financial picture.</div><div class="menu-grid">
+ <button class="menu-card" onclick="showSub('Accounts')"><span style="font-size:22px">▰</span><b>Accounts</b><span>Cash, savings, cards & loans</span></button>
+ <button class="menu-card" onclick="showSub('Budgets')"><span style="font-size:22px">◎</span><b>Budgets</b><span>Monthly category limits</span></button>
+ <button class="menu-card" onclick="showSub('Businesses')"><span style="font-size:22px">▦</span><b>Businesses</b><span>Invoxa & Farm</span></button>
+ <button class="menu-card" onclick="showSub('Reports')"><span style="font-size:22px">⌁</span><b>Reports</b><span>Trends & annual review</span></button>
+ <button class="menu-card" onclick="showSub('Net Worth')"><span style="font-size:22px">◇</span><b>Net worth</b><span>Assets minus liabilities</span></button>
+ <button class="menu-card" onclick="showSub('Settings')"><span style="font-size:22px">⚙</span><b>Settings</b><span>Profile, categories & security</span></button>
+ </div>
+ <div class="section card" id="sub"><div class="section-head"><h2>Accounts</h2><button class="link">Manage</button></div><div class="account"><div><b>Cheque Account</b><div class="sub">Reinhardt · Current</div></div><div class="balance">R18,450</div></div><div class="account"><div><b>Savings</b><div class="sub">Household savings</div></div><div class="balance">R128,000</div></div><div class="account"><div><b>Farm Account</b><div class="sub">Business</div></div><div class="balance">R34,280</div></div></div>
+ <div class="section card"><div class="section-head"><h2>2026 cash progress</h2><b class="green">+18.4%</b></div><div class="chart"><i style="height:38%"></i><i style="height:45%"></i><i style="height:41%"></i><i style="height:55%"></i><i style="height:62%"></i><i style="height:67%"></i><i style="height:74%"></i><i style="height:70%"></i><i style="height:82%"></i><i style="height:90%"></i></div><div class="chart-labels"><span>Jan</span><span>Mar</span><span>May</span><span>Jul</span><span>Sep</span><span>Oct</span></div></div>
+</section>
+</div>
+
+<button class="fab" id="fab">+</button>
+<nav class="nav"><button class="active" data-screen="home"><b>⌂</b>Home</button><button data-screen="activity"><b>⇄</b>Activity</button><button data-screen="goals"><b>◎</b>Goals</button><button data-screen="recurring"><b>↻</b>Recurring</button></nav>
+</div>
+
+<div class="sheet-bg" id="sheet"><div class="sheet"><div class="handle"></div><h2>Add transaction</h2><input class="money-input" placeholder="R 0.00"><div class="segment"><button class="active">Expense</button><button>Income</button><button>Transfer</button></div><div class="field"><label>Category</label><select><option>Groceries</option><option>Fuel</option><option>Vehicle</option><option>Insurance</option><option>Eating Out</option></select></div><div class="field"><label>Account</label><select><option>Cheque Account</option><option>Savings</option><option>Cash</option><option>Farm Account</option></select></div><div class="field"><label>Description</label><input placeholder="What was this for?"></div><div class="field"><label>Date</label><input type="date" value="2026-10-07"></div><div class="field"><label>Receipt (optional)</label><input type="file"></div><button class="save" onclick="closeSheet()">Save transaction</button></div></div>
+
+<script>
+const screens=[...document.querySelectorAll('.screen')], nav=[...document.querySelectorAll('.nav button')];
+function go(id){screens.forEach(x=>x.classList.toggle('active',x.id===id));nav.forEach(x=>x.classList.toggle('active',x.dataset.screen===id));window.scrollTo({top:0,behavior:'smooth'})}
+nav.forEach(b=>b.onclick=()=>go(b.dataset.screen));
+document.getElementById('fab').onclick=()=>document.getElementById('sheet').classList.add('open');
+document.getElementById('sheet').onclick=e=>{if(e.target.id==='sheet')closeSheet()};
+function closeSheet(){document.getElementById('sheet').classList.remove('open')}
+const vals={'Household':'R 14,850','Reinhardt':'R 9,600','↳ Invoxa':'R 28,450','Wife':'R 5,250','↳ Farm':'R 18,700'};
+document.getElementById('entity').onchange=e=>document.getElementById('safe').textContent=vals[e.target.value];
+document.querySelectorAll('.segment').forEach(s=>s.querySelectorAll('button').forEach(b=>b.onclick=()=>{s.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));
+function showSub(name){const sub=document.getElementById('sub');let body='';
+if(name==='Businesses')body='<div class="account"><div><b>Invoxa</b><div class="sub">Reinhardt · Software</div></div><div class="balance green">R18,600 profit</div></div><div class="account"><div><b>Farm</b><div class="sub">Wife · Agriculture</div></div><div class="balance green">R12,450 profit</div></div>';
+else if(name==='Reports')body='<div class="quick-grid"><div class="quick"><strong>R43k</strong><span>Income</span></div><div class="quick"><strong>R21.3k</strong><span>Expenses</span></div><div class="quick"><strong>22.1%</strong><span>Savings rate</span></div></div>';
+else if(name==='Budgets')body='<div class="budget"><div class="budget-line"><b>Total monthly budget</b><span>R21,300 / R29,000</span></div><div class="track"><i style="width:73%"></i></div></div><div class="sub">R7,700 remaining this month.</div>';
+else if(name==='Net Worth')body='<div class="big">R 486,300</div><div class="sub">Assets R742,000 · Liabilities R255,700</div>';
+else if(name==='Settings')body='<div class="account"><div><b>Profiles & security</b><div class="sub">Reinhardt and Wife</div></div><div>›</div></div><div class="account"><div><b>Categories</b><div class="sub">Personal and business categories</div></div><div>›</div></div>';
+else body='<div class="account"><div><b>Cheque Account</b><div class="sub">Reinhardt · Current</div></div><div class="balance">R18,450</div></div><div class="account"><div><b>Savings</b><div class="sub">Household savings</div></div><div class="balance">R128,000</div></div><div class="account"><div><b>Farm Account</b><div class="sub">Business</div></div><div class="balance">R34,280</div></div>';
+sub.innerHTML='<div class="section-head"><h2>'+name+'</h2><button class="link">Manage</button></div>'+body;sub.scrollIntoView({behavior:'smooth',block:'center'})}
+</script>
+
+<style>
+#dataPanel{margin:22px 16px;background:#fff;border:1px solid #e6e9e6;border-radius:22px;padding:18px}
+#dataPanel h3{margin:0 0 7px;font-size:16px}#dataPanel p{font-size:11px;color:#7b847f;line-height:1.45}
+.proto-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.proto-actions button{border:1px solid #e6e9e6;background:#fff;color:#123f32;border-radius:12px;padding:12px;font-weight:750}
+#savedItems{margin-top:13px}.saved-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #e6e9e6;font-size:12px}.saved-row small{display:block;color:#7b847f;margin-top:3px}
+#cacheToast{position:fixed;z-index:99;left:50%;bottom:155px;transform:translateX(-50%);background:#17201c;color:white;border-radius:12px;padding:10px 14px;font-size:11px;font-weight:700;display:none}
+</style>
+<script>
+(function(){
+ const KEY='our-money-mobile-demo-v1';
+ const seed={custom:[],accounts:[{name:'Reinhardt Cheque',balance:18450},{name:'Savings',balance:128000},{name:'Wife Cheque',balance:12200},{name:'Farm Account',balance:34280},{name:'Invoxa Account',balance:28450}]};
+ let data;
+ try{data=JSON.parse(localStorage.getItem(KEY))||seed}catch(e){data=seed}
+ function persist(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){} renderSaved()}
+ function toast(m){let t=document.getElementById('cacheToast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',1500)}
+ const content=document.querySelector('.content');
+ const panel=document.createElement('div');panel.id='dataPanel';
+ panel.innerHTML='<h3>Interactive prototype data</h3><p>Add test accounts, goals, recurring items and transactions. They are cached in this browser when local storage is available.</p><div class="proto-actions"><button type="button" data-add="Account">+ Account</button><button type="button" data-add="Goal">+ Goal</button><button type="button" data-add="Recurring">+ Recurring</button><button type="button" data-add="Transaction">+ Transaction</button></div><div id="savedItems"></div><div class="proto-actions"><button type="button" id="resetDemo">Reset cached data</button><button type="button" id="demoSummary">Show totals</button></div>';
+ document.getElementById('more').appendChild(panel);
+ const toastEl=document.createElement('div');toastEl.id='cacheToast';document.body.appendChild(toastEl);
+ function renderSaved(){
+   const box=document.getElementById('savedItems');
+   if(!data.custom.length){box.innerHTML='<div class="saved-row"><div><b>No custom items yet</b><small>Add something above and it will appear here.</small></div></div>';return}
+   box.innerHTML=data.custom.slice().reverse().map((x,i)=>'<div class="saved-row"><div><b>'+escapeHtml(x.name)+'</b><small>'+escapeHtml(x.type)+(x.amount?' · R'+Number(x.amount).toLocaleString('en-ZA'):'')+'</small></div><button type="button" data-remove="'+(data.custom.length-1-i)+'" style="border:0;background:none;color:#c84f4f">Delete</button></div>').join('');
+   box.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>{data.custom.splice(Number(b.dataset.remove),1);persist();toast('Removed')}));
+ }
+ function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+ panel.querySelectorAll('[data-add]').forEach(btn=>btn.addEventListener('click',()=>{
+   const type=btn.dataset.add;
+   const name=prompt(type+' name / description:'); if(!name)return;
+   let amount='';
+   if(type!=='Account'){amount=prompt('Amount in rand (optional):','1000')||'';if(amount && !(Number(amount)>0)){toast('Invalid amount');return}}
+   if(type==='Account'){amount=prompt('Opening balance:','0')||'0'}
+   data.custom.push({type,name,amount:Number(amount)||0,created:new Date().toISOString()});persist();toast(type+' saved')
+ }));
+ document.getElementById('resetDemo').addEventListener('click',()=>{if(confirm('Reset all cached prototype additions?')){data=JSON.parse(JSON.stringify(seed));persist();toast('Demo reset')}});
+ document.getElementById('demoSummary').addEventListener('click',()=>{const total=data.custom.reduce((s,x)=>s+(x.amount||0),0);alert('Cached custom items: '+data.custom.length+'\\nCombined entered amounts: R'+total.toLocaleString('en-ZA'))});
+ // Enhance original transaction save button to cache entered test transaction.
+ const originalSave=document.querySelector('#transactionModal .save-btn');
+ if(originalSave){
+   originalSave.addEventListener('click',()=>{
+     const modal=document.getElementById('transactionModal');
+     const amountField=modal.querySelector('.amount-input');
+     const desc=modal.querySelector('input[type="text"]:not(.amount-input)');
+     const active=modal.querySelector('.type-button.active');
+     const n=Number((amountField.value||'').replace(/[^\d.]/g,''));
+     if(!(n>0)){toast('Enter an amount first');return}
+     data.custom.push({type:active?active.textContent.trim():'Transaction',name:desc&&desc.value?desc.value:'Transaction',amount:n,created:new Date().toISOString()});
+     persist();modal.classList.remove('open');amountField.value='';if(desc)desc.value='';toast('Transaction cached')
+   });
+ }
+ renderSaved();
+})();
+</script>
+</body>
+</html>
